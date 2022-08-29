@@ -10,5 +10,5 @@ public class WikiApplication {
         SpringApplication.run(WikiApplication.class, args);
     }
 
-    private static final int ss = 292;
+    private static final int ss = 392;
 }
