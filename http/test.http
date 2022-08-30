@@ -10,3 +10,5 @@ Accept: application/json
 name=Test
 
 ###
+GET http://localhost:8080/test/list
+Accept: application/json
