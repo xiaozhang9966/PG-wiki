@@ -1,13 +1,14 @@
-package com.jiawa.wiki;
+package com.jiawa.wiki.config;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 import org.slf4j.Logger;
 
-
-
+//@ComponentScan("com.xxx",com."xxx")扫描多个包
+@ComponentScan("com.jiawa")//扫描以下全部包，交给spring处理
 @SpringBootApplication
 public class WikiApplication {
 
