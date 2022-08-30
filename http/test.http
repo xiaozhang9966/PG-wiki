@@ -4,8 +4,8 @@ Accept: application/json
 
 
 ###
-POST http://localhost:8080/hello/post
-Content-Type: application/x-www-form-urlencoded
+#POST http://localhost:8080/hello/post
+#Content-Type: application/x-www-form-urlencoded
 
 name=Test
 
