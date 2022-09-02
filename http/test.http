@@ -1,5 +1,5 @@
 #用于测试接口
-GET http://localhost:8080/hello
+GET http://localhost:8088/hello
 Accept: application/json
 
 
@@ -10,5 +10,7 @@ Accept: application/json
 name=Test
 
 ###
-GET http://localhost:8080/test/list
+GET http://localhost:8088/test/list
 Accept: application/json
+
+###
