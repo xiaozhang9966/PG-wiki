@@ -14,7 +14,6 @@
 //  */
 // @Component
 // public class LogInterceptor implements HandlerInterceptor { //Handeler
-//
 //     private static final Logger LOG = LoggerFactory.getLogger(LogInterceptor.class);
 //
 //     @Override
