@@ -1,22 +1,130 @@
 <template>
   <a-layout>
     <a-layout-content
-        :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }">
+        :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '80px'  }"
+    >
+      <!--列,key id,数据ebook,分页,等待框,分页执行方法-->
+      <a-table
+          :columns="columns"
+          :row-key="record => record.id"
+          :data-source="ebooks"
+          :pagination="pagination"
+          :loading="loading"
+          @change="handleTableChange"
+      >
+        <template #cover="{text:cover}"><!--图片-->
+          <img class="img-wh" v-if="cover" :src="cover" alt="avatar"/>
+        </template>
+        <template v-slot:action="{ text, record }">
+          <a-space size="small">
+            <a-button type="primary">
+              编辑
+            </a-button>
+            <a-button type="primary">
+              删除
+            </a-button>
+          </a-space>
+        </template>
+      </a-table>
     </a-layout-content>
-
-    <div class="about">
-      <h1>电子书管理</h1>
-    </div>
   </a-layout>
-
 </template>
 
-<script>
-export default {
-  name: "admin-ebook"
-}
+<script lang="ts">
+import {defineComponent, onMounted, ref} from 'vue';//写上onMounted VUE3.0 setup集成了 导入ref 做响应式数据
+import axios from 'axios';
+
+export default defineComponent({
+  name: 'AdminEbook',
+  setup() {
+    const param = ref();
+    param.value = {};
+    const ebooks = ref();//响应式数据 获取的书籍实时反馈到页面上
+    const pagination = ref({
+      current: 1,//当前页
+      pageSize: 2,//分页条数
+      total: 0
+    });
+
+    const loading = ref(false);
+
+    const columns = [//页面的响应变量 不是数据的响应变量 代表就是这个表格里面有多少个数据 下面数据我们自己定义的
+      {
+        title: '封面',
+        dataIndex: 'cover',
+        slots: {customRender: 'cover'}//渲染
+      },
+      {
+        title: '名称',
+        dataIndex: 'name',
+      },
+      {
+        title: '分类',
+        slots: {customRender: 'category'}
+      },
+      {
+        title: '阅读数',
+        dataIndex: 'viewCount',
+      },
+      {
+        title: '点赞数',
+        dataIndex: 'voteCount'
+      },
+      {
+        title: 'Action',
+        key: 'action',
+        slots: {customRender: 'action'}
+      }
+    ];
+    /**
+     * 数据查询
+     **/
+    const handleQuery = (params: any) => {
+      loading.value = true;
+      axios.get("/ebook/list",params).then((response) => {
+        loading.value = false;
+        const data = response.data;
+        console.log(data);
+        ebooks.value = data.content;
+
+        //重置分页按钮
+        pagination.value.current = params.page;//点第二页的按钮的时候前端 不会刷新 还是第一页的地方 实际我们以及到第二页了
+      });
+    };
+    /**
+     * 表格点击页码时触发
+     */
+    const handleTableChange = (pagination: any) => {
+      console.log("看看自带的分页参数都有啥：" + pagination);
+      handleQuery({
+        page: pagination.current,
+        size: pagination.pageSize
+      });
+    };
+
+    onMounted(() => {
+      handleQuery({});
+    });
+
+    return {
+      ebooks,//表格
+      pagination,
+      columns,
+      loading,
+      handleTableChange,
+    }
+  }
+});
 </script>
 
+<!-- #scoped表示当前组件才有用 -->
 <style scoped>
-
+  .img-wh {
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    border-radius: 8%;
+    margin: 5px 0;
+  }
 </style>
+
