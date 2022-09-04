@@ -1,6 +1,7 @@
 package com.jiawa.wiki.service;
 
 import com.fasterxml.jackson.databind.util.BeanUtil;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jiawa.wiki.aspect.LogAspect;
@@ -9,6 +10,7 @@ import com.jiawa.wiki.domain.EbookExample;
 import com.jiawa.wiki.mapper.EbookMapper;
 import com.jiawa.wiki.req.EbookReq;
 import com.jiawa.wiki.resp.EbookResp;
+import com.jiawa.wiki.resp.PageResp;
 import com.jiawa.wiki.util.CopyUtil;
 import com.mysql.cj.log.Log;
 import org.slf4j.Logger;
@@ -28,7 +30,7 @@ public class EbookService {
     @Resource
     private EbookMapper ebookMapper;
 
-    public List<EbookResp> list(EbookReq req){
+    public PageResp<EbookResp> list(EbookReq req){
 
         EbookExample ebookExample = new EbookExample();//domain下的example mybatis给我们自动生成了很多方法New 处理 才能调用他的方法
         EbookExample.Criteria criteria = ebookExample.createCriteria();//当作where语句 把criteria创建出来
@@ -36,7 +38,7 @@ public class EbookService {
         if (!ObjectUtils.isEmpty(req.getName())){//不为空 才能执行模糊查询 这样下面的查询selectBy里面是没有where条件的 所有执行的selectByExample查询全部
             criteria.andNameLike("%" + req.getName() + "%");
         }
-        PageHelper.startPage(1,3);  //当前页和三条数
+        PageHelper.startPage(req.getPage(), req.getSize());  //当前页和三条数
         List<Ebook> ebookList  = ebookMapper.selectByExample(ebookExample);//lectByExample = 基本查询语句 括号里面就是你的条件  我们写了where语句 下的模糊查询 Like
 
         PageInfo<Ebook> pageInfo = new PageInfo<>(ebookList);
@@ -51,6 +53,9 @@ public class EbookService {
 //      }
 
         List<EbookResp> list = CopyUtil.copyList(ebookList,EbookResp.class);
-        return list;
+        PageResp<EbookResp> pageResp = new PageResp();
+        pageResp.setTotal(pageInfo.getTotal());
+        pageResp.setList(list);
+        return pageResp;
     }
 }
