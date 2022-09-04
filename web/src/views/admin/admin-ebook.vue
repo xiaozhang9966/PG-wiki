@@ -42,7 +42,7 @@ export default defineComponent({
     const ebooks = ref();//响应式数据 获取的书籍实时反馈到页面上
     const pagination = ref({
       current: 1,//当前页
-      pageSize: 2,//分页条数
+      pageSize: 3,//分页条数
       total: 0
     });
 
