@@ -17,7 +17,7 @@
         </template>
         <template v-slot:action="{ text, record }">
           <a-space size="small">
-            <a-button type="primary">
+            <a-button type="primary" @click="edit(record)">
               编辑
             </a-button>
             <a-button type="primary">
@@ -28,13 +28,44 @@
       </a-table>
     </a-layout-content>
   </a-layout>
+
+  <a-modal
+      title="电子书表单"
+      v-model:visible="modalVisible"
+      :confirm-loading="modalLoading"
+      @ok="handleModalOk">
+
+    <!--弹出表单-->
+    <a-form :model="ebook" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
+      <a-form-item label="封面">
+        <a-input v-model:value="ebook.cover"/>
+      </a-form-item>
+      <a-form-item label="名称">
+        <a-input v-model:value="ebook.name"/>
+      </a-form-item>
+      <a-form-item label="分类一">
+        <a-cascader
+            v-model:value="categoryIds"
+            :field-names="{ label: 'name', value: 'id', children: 'children' }"
+            :options="level1"
+        />
+      </a-form-item>
+      <a-form-item label="描述">
+        <a-input v-model:value="ebook.description" type="textarea"/>
+      </a-form-item>
+    </a-form>
+
+  </a-modal>
+
 </template>
 
 <script lang="ts">
 import {defineComponent, onMounted, ref} from 'vue';//写上onMounted VUE3.0 setup集成了 导入ref 做响应式数据
 import axios from 'axios';
 
-export default defineComponent({
+export default
+
+defineComponent({
   name: 'AdminEbook',
   setup() {
     const param = ref();
@@ -94,7 +125,7 @@ export default defineComponent({
 
         //重置分页按钮
         pagination.value.current = params.page;//点第二页的按钮的时候前端 不会刷新 还是第一页的地方 实际我们以及到第二页了
-        pagination.value.total = data.content.total;//点第二页的按钮的时候前端 不会刷新 还是第一页的地方 实际我们以及到第二页了
+        pagination.value.total = data.content.total;//获得条数
       });
     };
     /**
@@ -106,6 +137,26 @@ export default defineComponent({
         page: pagination.current,
         size: pagination.pageSize
       });
+    };
+
+    //---------表单 --------------
+    const ebook = ref({});
+    const modalVisible = ref(false);
+    const modalLoading = ref(false);
+    const handleModalOk = () =>{
+      modalLoading.value = true;
+      setTimeout(() => {
+        modalVisible.value = false;
+        modalLoading.value = false;
+      },2000);
+    };
+
+    /**
+     * 编辑
+     */
+    const edit = (record:any) =>{
+      modalVisible.value = true;
+      ebook.value = record;
     };
 
     onMounted(() => {
@@ -121,6 +172,12 @@ export default defineComponent({
       columns,
       loading,
       handleTableChange,
+
+      edit,
+      ebook,
+      modalVisible,
+      modalLoading,
+      handleModalOk
     }
   }
 });
