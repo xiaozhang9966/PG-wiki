@@ -3,6 +3,11 @@
     <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '80px'  }"
     >
+      <p>
+        <a-button type="primary" @click="add()" size ="large">
+          新增
+        </a-button>
+      </p>
       <!--列,key id,数据ebook,分页,等待框,分页执行方法-->
       <a-table
           :columns="columns"
@@ -52,8 +57,16 @@
       <a-input v-model:value="ebook.category2Ids"/>
       </a-form-item>
 
-      <a-form-item label="描述">
-        <a-input v-model:value="ebook.description" type="textarea"/>
+      <a-form-item label="阅读">
+        <a-input v-model:value="ebook.viewCount"/>
+      </a-form-item>
+
+      <a-form-item label="点赞">
+        <a-input v-model:value="ebook.voteCount"/>
+      </a-form-item>
+
+      <a-form-item label="Action">
+        <a-input v-model:value="ebook.action"/>
       </a-form-item>
     </a-form>
 
@@ -92,7 +105,11 @@ defineComponent({
         dataIndex: 'name',
       },
       {
-        title: '分类',
+        title: '分类一',
+        slots: {customRender: 'category'}
+      },
+      {
+        title: '分类二',
         slots: {customRender: 'category'}
       },
       {
@@ -172,6 +189,14 @@ defineComponent({
       ebook.value = record;
     };
 
+    /**
+     *  新增
+     */
+    const add = () =>{
+      modalVisible.value = true;
+      ebook.value = {};
+    };
+
     onMounted(() => {
       handleQuery({
         page:1,
@@ -185,6 +210,8 @@ defineComponent({
       columns,
       loading,
       handleTableChange,
+
+      add,
 
       edit,
       ebook,
